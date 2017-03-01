@@ -20,6 +20,16 @@ app.config[ "SECRET_KEY" ] = "test"
 app.debug = True
 
 
+def publish( msg ):
+    pubsub_client = pubsub.Client( PROJECT_ID )
+    topic = pubsub_client.topic( "ffmpeg-pool" )
+
+    if not topic.exists():
+        topic.create()
+
+    topic.publish( msg )
+
+
 @app.route( "/readlog" )
 def readLog():
     msg = ""
@@ -40,46 +50,23 @@ def cleanTopics():
     topic = client.topic( "ffmpeg-pool" )
     topic.delete()
     topic.create()
-
     return "Cleaned topic"
-
 
 @app.route( "/split" )
 def split():
-    pubsub_client = pubsub.Client( PROJECT_ID )
-    topic = pubsub_client.topic( "ffmpeg-pool" )
-
-    if not topic.exists():
-        topic.create()
-
-    topic.publish( "split" )
-
+    publish( "split" )
     return "File queued for spliting"
 
 
 @app.route( "/transcode" )
 def transcode():
-    pubsub_client = pubsub.Client( PROJECT_ID )
-    topic = pubsub_client.topic( "ffmpeg-pool" )
-
-    if not topic.exists():
-        topic.create()
-
-    topic.publish( "transcode" )
-
+    publish( "transcode" )
     return "Job queued for transcoding"
 
 
 @app.route( "/combine" )
 def combine():
-    pubsub_client = pubsub.Client( PROJECT_ID )
-    topic = pubsub_client.topic( "ffmpeg-pool" )
-
-    if not topic.exists():
-        topic.create()
-
-    topic.publish( "combine" )
-
+    publish( "combine" )
     return "Job queued for combining"
 
 

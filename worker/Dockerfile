@@ -2,7 +2,12 @@ FROM gcr.io/google_appengine/python
 ENV https_proxy "http://proxy.ir.intel.com:911"
 ENV http_proxy "http://proxy.ir.intel.com:911"
 RUN echo "Acquire::http::Proxy \"http://proxy.ir.intel.com:911\";" > /etc/apt/apt.conf.d/999proxy
-RUN apt-get -y update && apt-get install -y libav-tools
+RUN echo "deb http://www.deb-multimedia.org jessie main non-free" >> /etc/apt/sources.list
+RUN echo "deb-src http://www.deb-multimedia.org jessie main non-free" >> /etc/apt/sources.list
+RUN apt-get --allow-unauthenticated -y update
+RUN apt-get --allow-unauthenticated -y install deb-multimedia-keyring
+RUN apt-get --allow-unauthenticated -y update
+RUN apt-get --allow-unauthenticated -y install libav-tools ffmpeg nmap vim 
 RUN virtualenv /env
 ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
